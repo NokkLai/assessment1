@@ -95,6 +95,18 @@ function loadDraft() {
 
   try {
     const draft = JSON.parse(raw);
+    // If the page already contains authored content, do not overwrite it
+    // with a saved local draft. This prevents edits to the HTML file from
+    // being hidden by an older draft stored in the browser's localStorage.
+    const pageHasContent =
+      (articleTitle && articleTitle.textContent && articleTitle.textContent.trim()) ||
+      (articleBody && articleBody.innerHTML && articleBody.innerHTML.trim());
+
+    if (pageHasContent) {
+      uploadStatus.textContent = "Local draft found but page already has content; draft not loaded.";
+      return;
+    }
+
     if (draft.title) {
       articleTitle.innerHTML = draft.title;
     }
